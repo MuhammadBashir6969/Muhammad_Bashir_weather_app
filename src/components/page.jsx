@@ -138,6 +138,7 @@ const WeatherApp = () => {
   const [locationWeather, setLocationWeather] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [searchedWeather, setSearchedWeather] = useState(null);
+  const [locationError, setLocationError] = useState(null);
   const reset = () => {
     setSearchedWeather(null);
   };
@@ -145,17 +146,25 @@ const WeatherApp = () => {
   const apiKey = "af5cc6e6a3804b4732d4af36a9f99782";
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-        });
-      },
-      (err) => {
-        console.error("Geolocation error:", err.message);
-      }
-    );
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+          setLocationError(null); // clear any previous error
+        },
+        (err) => {
+          console.error("Geolocation error:", err.message);
+          setLocationError(
+            "Please enable location services to see your local weather."
+          );
+        }
+      );
+    } else {
+      setLocationError("Geolocation is not supported by this browser.");
+    }
   }, []);
 
   useEffect(() => {
@@ -222,6 +231,18 @@ const WeatherApp = () => {
             <Search size={20} />
           </button>
         </div>
+
+        {locationError && (
+          <div
+            style={{
+              color: "#cc0000",
+              marginBottom: "1rem",
+              textAlign: "center",
+            }}
+          >
+            {locationError}
+          </div>
+        )}
 
         {locationWeather && (
           <div className="display-details">
