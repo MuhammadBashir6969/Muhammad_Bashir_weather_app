@@ -158,7 +158,7 @@ const WeatherApp = () => {
         (err) => {
           console.error("Geolocation error:", err.message);
           setLocationError(
-            "Please enable location services to see your local weather."
+            "Please enable location services to see your local weather and refresh your browser."
           );
         }
       );
